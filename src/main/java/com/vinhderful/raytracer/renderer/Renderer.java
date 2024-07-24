@@ -213,7 +213,7 @@ public class Renderer {
                     // If the hit object is the light source, then simply paint the light source's color
                     // This will give a flat white circle is a white sphere light
                     if (hitIndex == LIGHT_INDEX) {
-                        pixels.set(x + y * width, Color.toInt(bodyColors.get(LIGHT_INDEX)));
+                        //pixels.set(x + y * width, Color.toInt(bodyColors.get(LIGHT_INDEX)));
                     }
 
                     // If the hit object is not a light source, then compute the pixel color after calculating
