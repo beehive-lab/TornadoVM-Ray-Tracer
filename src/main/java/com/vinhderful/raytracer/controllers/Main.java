@@ -330,7 +330,7 @@ public class Main {
         WorkerGrid worker = new WorkerGrid2D(IB_dimensions.get(0), IB_dimensions.get(1));
         worker.setLocalWork(16, 16, 1);
         grid = new GridScheduler();
-        grid.setWorkerGrid("s0.t0", worker);
+        grid.addWorkerGrid("s0.t0", worker);
         executionPlan = new TornadoExecutionPlan(ts.snapshot());
     }
 

@@ -106,7 +106,7 @@ public class Benchmark {
         WorkerGrid worker = new WorkerGrid2D(WIDTH, HEIGHT);
         worker.setLocalWork(16, 16, 1);
         GridScheduler grid = new GridScheduler();
-        grid.setWorkerGrid("s0.t0", worker);
+        grid.addWorkerGrid("s0.t0", worker);
 
         TornadoExecutionPlan rayTracingPlan = new TornadoExecutionPlan(ts.snapshot());
         rayTracingPlan.withGridScheduler(grid).execute();
