@@ -2,7 +2,9 @@
 
 JARS=$(echo ${TORNADO_RAY_TRACER_ROOT}/target/classes | tr ' ' ':')
 
-JFLAGS=".:${JAVAFX_SDK}/lib -Xms18G -Xmx18G --add-modules ALL-SYSTEM,javafx.controls,javafx.graphics,javafx.fxml -Dprism.vsync=false -Dtornado.compiler.fullInlining=True"
+# MethodInlineBailoutLimit: Graal's inlining walker gives up after 1000 exploration steps by
+# default; on JDK 25 the render kernel's call tree needs far more, leaving invokes un-inlined.
+JFLAGS=".:${JAVAFX_SDK}/lib -Xms18G -Xmx18G --add-modules ALL-SYSTEM,javafx.controls,javafx.graphics,javafx.fxml -Dprism.vsync=false -Dtornado.compiler.fullInlining=True -Djdk.graal.MethodInlineBailoutLimit=1000000"
 
 if [ $# -eq 0 ]; then
 	echo "------------------------------------"
