@@ -2,7 +2,7 @@
 
 JARS=$(echo ${TORNADO_RAY_TRACER_ROOT}/target/classes | tr ' ' ':')
 
-JFLAGS=".:${JAVAFX_SDK}/lib -Xms18G -Xmx18G --add-modules ALL-SYSTEM,javafx.controls,javafx.graphics,javafx.fxml -Dprism.vsync=false"
+JFLAGS=".:${JAVAFX_SDK}/lib -Xms18G -Xmx18G --add-modules ALL-SYSTEM,javafx.controls,javafx.graphics,javafx.fxml -Dprism.vsync=false -Dtornado.compiler.fullInlining=True"
 
 if [ $# -eq 0 ]; then
 	echo "------------------------------------"
