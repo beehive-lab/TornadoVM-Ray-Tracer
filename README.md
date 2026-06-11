@@ -35,10 +35,18 @@ All TornadoVM SDKs are available on the [SDKMAN! TornadoVM page](https://sdkman.
 sdk install tornadovm
 ```
 
-- Use JDK 21
+- Use JDK 21 or JDK 25
+
+TornadoVM-Ray-Tracer builds and runs with **JDK 21** or **JDK 25**, as long as the installed TornadoVM distribution matches the JDK in use (TornadoVM ships separate `jdk21` and `jdk25` builds). The Maven build auto-detects the running JDK and selects the matching TornadoVM dependency:
+
+| JDK | Maven profile (auto-activated) | TornadoVM dependency |
+|-----|-------------------------------|----------------------|
+| 21.x | `jdk21` | `tornado-api` `*-jdk21` |
+| 25.0.2+ | `jdk25` | `tornado-api` `*-jdk25` |
 
 ```bash
-sdk install java 21.0.2-open 
+sdk install java 21.0.2-open    # for JDK 21
+sdk install java 25.0.2-open    # for JDK 25
 ```
 
 - Download the JavaFX SDK for your system from: [JavaFX downloads](https://gluonhq.com/products/javafx/). You will need
@@ -66,6 +74,12 @@ source sources.env
 
 ```bash
 mvn clean install
+```
+
+The JDK profile is selected automatically from the JDK running Maven. To force a specific variant regardless of the running JDK:
+
+```bash
+mvn clean install -P jdk21,'!jdk25'   # force the JDK 21 variant
 ```
 
 5. Run TornadoVM-Ray-Tracer:
