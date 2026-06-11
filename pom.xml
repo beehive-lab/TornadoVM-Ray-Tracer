@@ -74,6 +74,22 @@
                 <jdk.version.suffix>-jdk21-dev</jdk.version.suffix>
                 <tornadovm.version>${tornadovm.base.version}${jdk.version.suffix}</tornadovm.version>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <!-- The FFM API backing TornadoVM's native arrays is a preview API in
+                                 Java 21 (final since Java 22), so the jdk21 TornadoVM jars are
+                                 compiled with enable-preview and consumers must compile with it too. -->
+                            <compilerArgs>
+                                <arg>--enable-preview</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
 
         <!-- ─── JDK 25 ───────────────────────────────────────────────────────────
