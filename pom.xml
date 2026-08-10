@@ -94,9 +94,10 @@
 
         <!-- ─── JDK 25 ───────────────────────────────────────────────────────────
              Auto-activates for JDK 25.0.2 through 25.x builds (minimum required version).
-             Capped below 26 so JDK 27+ builds fall through to the jdk27 profile below
-             instead of silently compiling against the jdk25 tornado-api (which predates
-             the Serializable Task interfaces the JVMCI-absent runtime path relies on).
+             Capped below 26 so JDK 26+ builds fall through to the jdk26/jdk27 profiles
+             below instead of silently compiling against the jdk25 tornado-api (which
+             predates the Serializable Task interfaces the reflection-based runtime path
+             on JDK 26+ relies on — see TaskUtils.resolveViaSerializedLambda upstream).
              TornadoVM: ${tornadovm.base.version}-jdk25-dev
         ─────────────────────────────────────────────────────────────────────── -->
         <profile>
@@ -106,6 +107,27 @@
                 <maven.compiler.release>25</maven.compiler.release>
                 <jdk.version.suffix>-jdk25</jdk.version.suffix>
                 <tornadovm.version>${tornadovm.base.version}${jdk.version.suffix}</tornadovm.version>
+            </properties>
+        </profile>
+
+        <!-- ─── JDK 26 ───────────────────────────────────────────────────────────
+             Auto-activates for JDK 26.x builds. JVMCI still ships on JDK 26 but its SPI
+             has drifted from the JDK-21 shape TornadoVM's reflection providers compile
+             against, so TornadoVM's launcher overlays a frozen JDK-21 jvmci jar via the
+             patch-module flag (self.jvmci_patched in tornado.py) and resolves kernel entry
+             lambdas via SerializedLambda instead of hidden-class bytecode — the same
+             Serializable Task interfaces the jdk27 profile below needs.
+             TornadoVM: pinned to the locally-built 5.2.1-jdk26-dev artifacts (no
+             5.0.0-jdk26 release exists yet, so this does not follow the base+suffix
+             composition the jdk21/jdk25 profiles use).
+        ─────────────────────────────────────────────────────────────────────── -->
+        <profile>
+            <id>jdk26</id>
+            <activation><jdk>[26,27)</jdk></activation>
+            <properties>
+                <maven.compiler.release>26</maven.compiler.release>
+                <jdk.version.suffix>-jdk26</jdk.version.suffix>
+                <tornadovm.version>5.2.1-jdk26-dev</tornadovm.version>
             </properties>
         </profile>
 
