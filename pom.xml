@@ -41,6 +41,11 @@
 
     <properties>
         <tornadovm.base.version>5.0.0</tornadovm.base.version>
+        <!-- Locally-built jdk27-jvmci-removal branch revision (see build-test-matrix.sh in that
+             repo: it builds and installs 5.2.1-jdkNN-dev for JDK 21/25/26/27 alike). The jdk21/
+             jdk25/jdk26/jdk27 profiles below all compose their tornadovm.version from this, so
+             bumping the branch's revision only needs a change here. -->
+        <tornadovm.dev.version>5.2.1</tornadovm.dev.version>
         <!-- Defaults (overridden by the JDK profiles below) -->
         <jdk.version.suffix>-jdk25</jdk.version.suffix>
         <tornadovm.version>${tornadovm.base.version}${jdk.version.suffix}</tornadovm.version>
@@ -64,7 +69,10 @@
     <profiles>
         <!-- ─── JDK 21 ───────────────────────────────────────────────────────────
              Auto-activates for JDK 21.x builds.
-             TornadoVM: ${tornadovm.base.version}-jdk21-dev
+             TornadoVM: pinned to the locally-built ${tornadovm.dev.version}-jdk21-dev
+             artifacts, matching the jdk25/jdk26/jdk27 profiles below - not the published
+             5.0.0-jdk21 (which predates the Serializable Task interfaces the
+             SerializedLambda-based kernel resolution on this branch relies on).
         ─────────────────────────────────────────────────────────────────────── -->
         <profile>
             <id>jdk21</id>
@@ -72,7 +80,7 @@
             <properties>
                 <maven.compiler.release>21</maven.compiler.release>
                 <jdk.version.suffix>-jdk21</jdk.version.suffix>
-                <tornadovm.version>${tornadovm.base.version}${jdk.version.suffix}</tornadovm.version>
+                <tornadovm.version>${tornadovm.dev.version}${jdk.version.suffix}-dev</tornadovm.version>
             </properties>
             <build>
                 <plugins>
@@ -98,7 +106,8 @@
              below instead of silently compiling against the jdk25 tornado-api (which
              predates the Serializable Task interfaces the reflection-based runtime path
              on JDK 26+ relies on — see TaskUtils.resolveViaSerializedLambda upstream).
-             TornadoVM: ${tornadovm.base.version}-jdk25-dev
+             TornadoVM: pinned to the locally-built ${tornadovm.dev.version}-jdk25-dev
+             artifacts (same reasoning as jdk21 above), not the published 5.0.0-jdk25.
         ─────────────────────────────────────────────────────────────────────── -->
         <profile>
             <id>jdk25</id>
@@ -106,7 +115,7 @@
             <properties>
                 <maven.compiler.release>25</maven.compiler.release>
                 <jdk.version.suffix>-jdk25</jdk.version.suffix>
-                <tornadovm.version>${tornadovm.base.version}${jdk.version.suffix}</tornadovm.version>
+                <tornadovm.version>${tornadovm.dev.version}${jdk.version.suffix}-dev</tornadovm.version>
             </properties>
         </profile>
 
@@ -117,9 +126,8 @@
              patch-module flag (self.jvmci_patched in tornado.py) and resolves kernel entry
              lambdas via SerializedLambda instead of hidden-class bytecode — the same
              Serializable Task interfaces the jdk27 profile below needs.
-             TornadoVM: pinned to the locally-built 5.2.1-jdk26-dev artifacts (no
-             5.0.0-jdk26 release exists yet, so this does not follow the base+suffix
-             composition the jdk21/jdk25 profiles use).
+             TornadoVM: pinned to the locally-built ${tornadovm.dev.version}-jdk26-dev
+             artifacts (no published 5.0.0-jdk26 release exists).
         ─────────────────────────────────────────────────────────────────────── -->
         <profile>
             <id>jdk26</id>
@@ -127,16 +135,15 @@
             <properties>
                 <maven.compiler.release>26</maven.compiler.release>
                 <jdk.version.suffix>-jdk26</jdk.version.suffix>
-                <tornadovm.version>5.2.1-jdk26-dev</tornadovm.version>
+                <tornadovm.version>${tornadovm.dev.version}${jdk.version.suffix}-dev</tornadovm.version>
             </properties>
         </profile>
 
         <!-- ─── JDK 27 ───────────────────────────────────────────────────────────
              Auto-activates for JDK 27+ builds (JVMCI fully removed upstream,
              openjdk/jdk#30834 — see TornadoVM's own jdk27 profile and JDK27-NO-JVMCI.md).
-             TornadoVM: pinned to the locally-built 5.2.1-jdk27-dev artifacts (no
-             5.0.0-jdk27 release exists yet, so this does not follow the base+suffix
-             composition the other profiles use).
+             TornadoVM: pinned to the locally-built ${tornadovm.dev.version}-jdk27-dev
+             artifacts (no published 5.0.0-jdk27 release exists).
              No enable-preview flag needed: the FFM API is final on JDK 27, and this
              project's sources don't reference jdk.incubator.vector directly (only
              TornadoVM's own runtime jar does, at runtime, via the launcher's
@@ -148,7 +155,7 @@
             <properties>
                 <maven.compiler.release>27</maven.compiler.release>
                 <jdk.version.suffix>-jdk27</jdk.version.suffix>
-                <tornadovm.version>5.2.1-jdk27-dev</tornadovm.version>
+                <tornadovm.version>${tornadovm.dev.version}${jdk.version.suffix}-dev</tornadovm.version>
             </properties>
         </profile>
     </profiles>
