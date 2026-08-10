@@ -93,16 +93,40 @@
         </profile>
 
         <!-- ─── JDK 25 ───────────────────────────────────────────────────────────
-             Auto-activates for JDK 25.0.2+ builds (minimum required version).
+             Auto-activates for JDK 25.0.2 through 25.x builds (minimum required version).
+             Capped below 26 so JDK 27+ builds fall through to the jdk27 profile below
+             instead of silently compiling against the jdk25 tornado-api (which predates
+             the Serializable Task interfaces the JVMCI-absent runtime path relies on).
              TornadoVM: ${tornadovm.base.version}-jdk25-dev
         ─────────────────────────────────────────────────────────────────────── -->
         <profile>
             <id>jdk25</id>
-            <activation><jdk>[25.0.2,)</jdk></activation>
+            <activation><jdk>[25.0.2,26)</jdk></activation>
             <properties>
                 <maven.compiler.release>25</maven.compiler.release>
                 <jdk.version.suffix>-jdk25</jdk.version.suffix>
                 <tornadovm.version>${tornadovm.base.version}${jdk.version.suffix}</tornadovm.version>
+            </properties>
+        </profile>
+
+        <!-- ─── JDK 27 ───────────────────────────────────────────────────────────
+             Auto-activates for JDK 27+ builds (JVMCI fully removed upstream,
+             openjdk/jdk#30834 — see TornadoVM's own jdk27 profile and JDK27-NO-JVMCI.md).
+             TornadoVM: pinned to the locally-built 5.2.1-jdk27-dev artifacts (no
+             5.0.0-jdk27 release exists yet, so this does not follow the base+suffix
+             composition the other profiles use).
+             No enable-preview flag needed: the FFM API is final on JDK 27, and this
+             project's sources don't reference jdk.incubator.vector directly (only
+             TornadoVM's own runtime jar does, at runtime, via the launcher's
+             add-modules ALL-SYSTEM).
+        ─────────────────────────────────────────────────────────────────────── -->
+        <profile>
+            <id>jdk27</id>
+            <activation><jdk>[27,)</jdk></activation>
+            <properties>
+                <maven.compiler.release>27</maven.compiler.release>
+                <jdk.version.suffix>-jdk27</jdk.version.suffix>
+                <tornadovm.version>5.2.1-jdk27-dev</tornadovm.version>
             </properties>
         </profile>
     </profiles>
