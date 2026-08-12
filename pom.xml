@@ -41,6 +41,11 @@
 
     <properties>
         <tornadovm.base.version>5.0.0</tornadovm.base.version>
+        <!-- Locally-built jdk27-jvmci-removal branch revision (see build-test-matrix.sh in that
+             repo: it builds and installs 5.2.1-jdkNN-dev for JDK 21/25/26/27 alike). The jdk21/
+             jdk25/jdk26/jdk27 profiles below all compose their tornadovm.version from this, so
+             bumping the branch's revision only needs a change here. -->
+        <tornadovm.dev.version>5.2.1</tornadovm.dev.version>
         <!-- Defaults (overridden by the JDK profiles below) -->
         <jdk.version.suffix>-jdk25</jdk.version.suffix>
         <tornadovm.version>${tornadovm.base.version}${jdk.version.suffix}</tornadovm.version>
@@ -64,15 +69,18 @@
     <profiles>
         <!-- ─── JDK 21 ───────────────────────────────────────────────────────────
              Auto-activates for JDK 21.x builds.
-             TornadoVM: ${tornadovm.base.version}-jdk21-dev
+             TornadoVM: pinned to the locally-built ${tornadovm.dev.version}-jdk21-dev
+             artifacts, matching the jdk25/jdk26/jdk27 profiles below - not the published
+             5.0.0-jdk21 (which predates the Serializable Task interfaces the
+             SerializedLambda-based kernel resolution on this branch relies on).
         ─────────────────────────────────────────────────────────────────────── -->
         <profile>
             <id>jdk21</id>
-            <activation><jdk>[21,25)</jdk></activation>
+            <activation><jdk>[21,22)</jdk></activation>
             <properties>
                 <maven.compiler.release>21</maven.compiler.release>
                 <jdk.version.suffix>-jdk21</jdk.version.suffix>
-                <tornadovm.version>${tornadovm.base.version}${jdk.version.suffix}</tornadovm.version>
+                <tornadovm.version>${tornadovm.dev.version}${jdk.version.suffix}-dev</tornadovm.version>
             </properties>
             <build>
                 <plugins>
@@ -92,17 +100,30 @@
             </build>
         </profile>
 
-        <!-- ─── JDK 25 ───────────────────────────────────────────────────────────
-             Auto-activates for JDK 25.0.2+ builds (minimum required version).
-             TornadoVM: ${tornadovm.base.version}-jdk25-dev
+        <!-- ─── JDK 22+ ──────────────────────────────────────────────────────────
+             Auto-activates for JDK 22 and newer. TornadoVM consolidated its old
+             per-version jdk25/jdk26/jdk27 dev profiles into one "jdk22plus" SDK
+             build that runs unchanged on 22, 23, ..., 27 and later (see
+             build-test-matrix.sh in the jdk27-jvmci-removal TornadoVM branch: it now
+             builds and installs a single 5.2.1-jdk22plus-dev for JDK 22-27 alike,
+             replacing the former per-version 5.2.1-jdkNN-dev artifacts) - so one
+             profile here (replacing the former jdk25/jdk26/jdk27 profiles) covers
+             the whole open-ended range too, including the JVMCI-removed JDK 27+
+             case the old jdk27 profile called out separately.
+             No enable-preview flag needed: the FFM API is final since JDK 22, and
+             this project's sources don't reference jdk.incubator.vector directly
+             (only TornadoVM's own runtime jar does, at runtime, via the launcher's
+             add-modules ALL-SYSTEM) - same reasoning the old jdk27 profile gave.
+             TornadoVM: pinned to the locally-built ${tornadovm.dev.version}-jdk22plus-dev
+             artifact, not a published release (no 5.2.1 GA exists yet at all).
         ─────────────────────────────────────────────────────────────────────── -->
         <profile>
-            <id>jdk25</id>
-            <activation><jdk>[25.0.2,)</jdk></activation>
+            <id>jdk22plus</id>
+            <activation><jdk>[22,)</jdk></activation>
             <properties>
-                <maven.compiler.release>25</maven.compiler.release>
-                <jdk.version.suffix>-jdk25</jdk.version.suffix>
-                <tornadovm.version>${tornadovm.base.version}${jdk.version.suffix}</tornadovm.version>
+                <maven.compiler.release>22</maven.compiler.release>
+                <jdk.version.suffix>-jdk22plus</jdk.version.suffix>
+                <tornadovm.version>${tornadovm.dev.version}${jdk.version.suffix}-dev</tornadovm.version>
             </properties>
         </profile>
     </profiles>
