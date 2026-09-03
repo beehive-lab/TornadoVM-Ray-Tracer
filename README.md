@@ -35,18 +35,18 @@ All TornadoVM SDKs are available on the [SDKMAN! TornadoVM page](https://sdkman.
 sdk install tornadovm
 ```
 
-- Use JDK 21 or JDK 25
+- Use JDK 21 or any JDK 22+ (e.g. JDK 25)
 
-TornadoVM-Ray-Tracer builds and runs with **JDK 21** or **JDK 25**, as long as the installed TornadoVM distribution matches the JDK in use (TornadoVM ships separate `jdk21` and `jdk25` builds). The Maven build auto-detects the running JDK and selects the matching TornadoVM dependency:
+TornadoVM-Ray-Tracer builds and runs with **JDK 21** or any **JDK 22 or newer**, as long as the installed TornadoVM distribution matches the JDK in use (TornadoVM ships separate `jdk21` and `jdk22plus` builds). The Maven build auto-detects the running JDK and selects the matching TornadoVM dependency:
 
 | JDK | Maven profile (auto-activated) | TornadoVM dependency |
 |-----|-------------------------------|----------------------|
 | 21.x | `jdk21` | `tornado-api` `*-jdk21` |
-| 25.0.2+ | `jdk25` | `tornado-api` `*-jdk25` |
+| 22+  | `jdk22plus` | `tornado-api` `*-jdk22plus` |
 
 ```bash
 sdk install java 21.0.2-open    # for JDK 21
-sdk install java 25.0.2-open    # for JDK 25
+sdk install java 25.0.2-open    # for JDK 25 (any JDK 22+ works)
 ```
 
 - Download the JavaFX SDK for your system from: [JavaFX downloads](https://gluonhq.com/products/javafx/). You will need
@@ -79,7 +79,7 @@ mvn clean install
 The JDK profile is selected automatically from the JDK running Maven. To force a specific variant regardless of the running JDK:
 
 ```bash
-mvn clean install -P jdk21,'!jdk25'   # force the JDK 21 variant
+mvn clean install -P jdk21,'!jdk22plus'   # force the JDK 21 variant
 ```
 
 5. Run TornadoVM-Ray-Tracer:
